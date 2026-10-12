@@ -36,7 +36,7 @@ const PHASES: Record<Level, { t: string; s: string }[]> = {
   ],
 };
 
-const TASKS: Record<string, string[]> = {
+const TASKS: Record<"learn" | "practice" | "build" | "reflect", string[]> = {
   learn: ["Study one core concept of {g}", "Watch a focused lesson about {g}", "Read an article or chapter on {g}", "Write notes summarising today's learning"],
   practice: ["Do a 20-min practice exercise for {g}", "Repeat yesterday's exercise from memory", "Solve one small challenge related to {g}", "Review mistakes and retry one"],
   build: ["Work on your {g} project for one session", "Finish one small feature/part of your project", "Document progress in a journal", "Plan tomorrow's project step"],
@@ -65,11 +65,11 @@ function buildTasks(goal: string, level: Level, months: number, minutes: number,
     const month = Math.floor(d / 30);
     const week = Math.floor((d % 30) / 7.5);
     const progress = d / totalDays;
-    const pools = progress < 0.3 ? ["learn", "practice", "learn"] : progress < 0.7 ? ["practice", "build", "learn"] : ["build", "build", "reflect"];
+    const pools: (keyof typeof TASKS)[] = progress < 0.3 ? ["learn", "practice", "learn"] : progress < 0.7 ? ["practice", "build", "learn"] : ["build", "build", "reflect"];
     if (level !== "Beginner" && progress < 0.3) pools[2] = "build";
     const dow = d % 7;
     for (let i = 0; i < per; i++) {
-      const pool = dow === 6 && i === per - 1 ? TASKS.reflect : TASKS[pools[i]];
+      const pool = dow === 6 && i === per - 1 ? TASKS.reflect : TASKS[pools[i]!];
       out.push({
         id: uid(), date: fmt(addDays(start, d - startDayIndex)), month, week, done: false,
         minutes: Math.round(minutes / per),
@@ -86,7 +86,7 @@ export function generateSamplePlan(input: PlanInput): Plan {
   const start = new Date();
   const phases = PHASES[input.level];
   const milestones: Milestone[] = Array.from({ length: input.months }, (_, m) => {
-    const p = phases[Math.min(phases.length - 1, Math.floor((m / input.months) * phases.length))];
+    const p = phases[Math.min(phases.length - 1, Math.floor((m / input.months) * phases.length))]!;
     return {
       title: `Month ${m + 1}: ${p.t}`,
       summary: p.s,
@@ -97,7 +97,7 @@ export function generateSamplePlan(input: PlanInput): Plan {
   return {
     id: uid(), ...input, source: "sample",
     startDate: fmt(start), targetDate: fmt(addDays(start, input.months * 30 - 1)), createdAt: new Date().toISOString(),
-    nextSteps: `With ${input.minutesPerDay} minutes a day over ${input.months} month${input.months > 1 ? "s" : ""}, you'll start with ${phases[0].t.toLowerCase()} and steadily move toward ${phases[phases.length - 1].t.toLowerCase()}. Keep each day small: ${tasksPerDay(input.minutesPerDay)} focused task${tasksPerDay(input.minutesPerDay) > 1 ? "s" : ""}. Consistency beats intensity — missed days can be rescheduled anytime.`,
+    nextSteps: `With ${input.minutesPerDay} minutes a day over ${input.months} month${input.months > 1 ? "s" : ""}, you'll start with ${phases[0]!.t.toLowerCase()} and steadily move toward ${phases[phases.length - 1]!.t.toLowerCase()}. Keep each day small: ${tasksPerDay(input.minutesPerDay)} focused task${tasksPerDay(input.minutesPerDay) > 1 ? "s" : ""}. Consistency beats intensity — missed days can be rescheduled anytime.`,
     milestones,
     tasks: buildTasks(input.goal, input.level, input.months, input.minutesPerDay, start),
   };
