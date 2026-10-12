@@ -73,7 +73,7 @@ function buildTasks(goal: string, level: Level, months: number, minutes: number,
       out.push({
         id: uid(), date: fmt(addDays(start, d - startDayIndex)), month, week, done: false,
         minutes: Math.round(minutes / per),
-        title: pool[(d + i) % pool.length].replace("{g}", g),
+        title: pool[(d + i) % pool.length]!.replace("{g}", g),
       });
     }
   }
