@@ -83,7 +83,7 @@ function Home() {
           <p className="mt-4 text-muted-foreground">Open your dashboard and see today's tasks, your current milestone and overall progress at a glance. Check off a task and watch your progress move instantly.</p>
           <Link to="/new" className="btn btn-primary mt-6">Build My Roadmap <ArrowRight className="h-4 w-4" /></Link>
         </div>
-        <div className="card p-6">
+        <Link to="/dashboard" className="card block p-6 transition hover:border-primary/40 hover:shadow-glow" aria-label="Open your dashboard tasks">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Goal</p>
           <p className="font-display text-lg font-semibold">Become a frontend developer</p>
           <div className="mt-4 flex items-center justify-between text-sm"><span className="text-muted-foreground">Overall progress</span><span className="font-semibold">38%</span></div>
