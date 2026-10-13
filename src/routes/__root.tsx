@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import { Header, Footer } from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 

@@ -93,6 +93,7 @@ export function Header() {
         <nav className="flex flex-col gap-1 border-t px-4 py-3 md:hidden">
           {links.map((l) => <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium" activeOptions={{ exact: true }} activeProps={{ className: "text-primary bg-primary-soft" }}>{l.label}</Link>)}
           <Link to="/new" onClick={() => setOpen(false)} className="btn btn-primary mt-2">Start Your Journey</Link>
+          <div onClick={() => setOpen(false)} className="mt-2"><AuthButton /></div>
         </nav>
       )}
     </header>
