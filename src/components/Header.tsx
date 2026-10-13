@@ -1,6 +1,43 @@
-import { Link } from "@tanstack/react-router";
-import { Moon, Sun, Menu, X, Footprints } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Moon, Sun, Menu, X, Footprints, LogOut, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+
+export function useAuthUser() {
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+  return user;
+}
+
+export function AuthButton() {
+  const user = useAuthUser();
+  const navigate = useNavigate();
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
+  };
+  if (!user) {
+    return <Link to="/auth" className="btn btn-outline">Sign in</Link>;
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <span className="hidden items-center gap-1.5 rounded-lg bg-secondary px-2.5 py-1.5 text-xs font-medium sm:flex" title={user.email ?? ""}>
+        <UserRound className="h-3.5 w-3.5" />
+        {user.email?.split("@")[0]}
+      </span>
+      <button onClick={signOut} aria-label="Sign out" className="btn btn-outline !p-2.5">
+        <LogOut className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
 
 export function Logo() {
   return (
