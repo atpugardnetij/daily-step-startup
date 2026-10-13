@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Sparkles, Map, ListChecks, TrendingUp, Target, Clock, RefreshCw, Smartphone, CheckCircle2, Circle } from "lucide-react";
+import { ArrowRight, Sparkles, Map, ListChecks, TrendingUp, CheckCircle2, Circle, Plus, Minus } from "lucide-react";
 import { ProgressBar } from "@/components/Header";
 
 export const Route = createFileRoute("/")({
@@ -20,14 +21,33 @@ const steps = [
   { icon: ListChecks, t: "Daily Tasks", d: "Small actions that fit your day." },
   { icon: TrendingUp, t: "Progress", d: "Watch consistency turn into results." },
 ];
-const benefits = [
-  { icon: Target, t: "Clarity", d: "No more vague goals — know exactly what to do today." },
-  { icon: Clock, t: "Fits your time", d: "Plans adapt to 15 minutes or 2 hours a day." },
-  { icon: RefreshCw, t: "Adapts with you", d: "Fell behind? Reschedule in one click." },
-  { icon: Smartphone, t: "Anywhere", d: "Works beautifully on phone, tablet and desktop." },
+
+const faqs = [
+  {
+    q: "What is DreamStep?",
+    a: "DreamStep is a goal-planning platform that helps you turn your dreams into actionable daily tasks. It creates a structured roadmap to help you stay focused, track your progress, and work toward your goals.",
+  },
+  {
+    q: "How does DreamStep work?",
+    a: "Simply enter your goal, choose your target timeline, select your current skill level, and tell us how much time you can dedicate each day. DreamStep then helps you create a roadmap with milestones and daily tasks.",
+  },
+  {
+    q: "Can I create a roadmap for any goal?",
+    a: "Yes! You can create a roadmap for goals such as learning a new skill, preparing for exams, building a business, improving your habits, or developing your career. Your results depend on the goal and the information you provide.",
+  },
+  {
+    q: "Is DreamStep free to use?",
+    a: "DreamStep aims to make goal planning accessible to everyone. Basic features may be available for free. However, some advanced features, including AI-powered services, may depend on available usage limits or future pricing.",
+  },
+  {
+    q: "What happens if I miss my daily tasks?",
+    a: "Missing a task doesn't mean you've failed. You can review unfinished tasks, adjust your schedule, and continue working toward your goal. DreamStep is designed to help you build consistency rather than chase perfection.",
+  },
 ];
 
 function Home() {
+  const [open, setOpen] = useState<number | null>(0);
+
   return (
     <div>
       <section className="bg-hero">
@@ -80,16 +100,34 @@ function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <h2 className="text-center text-3xl font-bold">Why DreamStep</h2>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {benefits.map((b) => (
-            <div key={b.t} className="card p-6">
-              <b.icon className="h-6 w-6 text-primary" />
-              <h3 className="mt-3 font-semibold">{b.t}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{b.d}</p>
-            </div>
-          ))}
+      <section className="mx-auto max-w-3xl px-4 py-12">
+        <h2 className="text-center text-3xl font-bold">Frequently Asked Questions</h2>
+        <p className="mx-auto mt-3 max-w-lg text-center text-muted-foreground">Everything you need to know before you take the first step.</p>
+        <div className="mt-8 space-y-3">
+          {faqs.map((f, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={f.q} className="card overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                >
+                  <span className="font-semibold">{f.q}</span>
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary-soft text-primary">
+                    {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                  </span>
+                </button>
+                {isOpen && (
+                  <p className="border-t px-5 pb-5 pt-4 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-8 text-center">
+          <Link to="/new" className="btn btn-primary">Start Your Journey <ArrowRight className="h-4 w-4" /></Link>
         </div>
       </section>
     </div>
