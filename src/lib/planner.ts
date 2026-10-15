@@ -103,6 +103,35 @@ export function generateSamplePlan(input: PlanInput): Plan {
   };
 }
 
+/** Build a plan from AI-generated milestones; daily tasks come from the AI's per-month task list. */
+export function buildAiPlan(
+  input: PlanInput,
+  ai: { nextSteps: string; milestones: (Milestone & { dailyTasks: string[] })[] },
+): Plan {
+  const start = new Date();
+  const months = ai.milestones.length;
+  const per = tasksPerDay(input.minutesPerDay);
+  const tasks: Task[] = [];
+  for (let d = 0; d < months * 30; d++) {
+    const month = Math.floor(d / 30);
+    const pool = ai.milestones[month]!.dailyTasks;
+    for (let i = 0; i < per; i++) {
+      tasks.push({
+        id: uid(), date: fmt(addDays(start, d)), month, week: Math.floor((d % 30) / 7.5), done: false,
+        minutes: Math.round(input.minutesPerDay / per),
+        title: pool[((d % 30) * per + i) % pool.length]!,
+      });
+    }
+  }
+  return {
+    id: uid(), ...input, months, source: "ai",
+    startDate: fmt(start), targetDate: fmt(addDays(start, months * 30 - 1)), createdAt: new Date().toISOString(),
+    nextSteps: ai.nextSteps,
+    milestones: ai.milestones.map(({ title, summary, weeks, resources }) => ({ title, summary, weeks, resources })),
+    tasks,
+  };
+}
+
 /** Move overdue unfinished tasks forward, max `per` extra per day. */
 export function rescheduleOverdue(plan: Plan): Plan {
   const t = today();
