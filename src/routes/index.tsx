@@ -2,6 +2,8 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles, Map, ListChecks, TrendingUp, CheckCircle2, Circle, Plus, Minus } from "lucide-react";
 import { ProgressBar } from "@/components/Header";
+import { useStore } from "@/lib/store";
+import { today } from "@/lib/planner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -47,6 +49,18 @@ const faqs = [
 
 function Home() {
   const [open, setOpen] = useState<number | null>(0);
+  const { active: plan } = useStore();
+  const done = plan ? plan.tasks.filter((t) => t.done).length : 0;
+  const progress = plan && plan.tasks.length ? done / plan.tasks.length : 0.38;
+  const t = today();
+  const todaysTasks = plan ? plan.tasks.filter((x) => x.date === t).slice(0, 3) : [];
+  const curMonth = plan ? (todaysTasks[0]?.month ?? plan.tasks.find((x) => !x.done && x.date >= t)?.month ?? 0) : 0;
+  const milestone = plan?.milestones[curMonth];
+  const demoTasks: [string, boolean][] = [["Study one core concept of CSS layout", true], ["Do a 20-min practice exercise", true], ["Write notes summarising today's learning", false]];
+  const cardTasks: [string, boolean][] = plan
+    ? (todaysTasks.length ? todaysTasks : plan.tasks.filter((x) => !x.done).slice(0, 3)).map((x) => [x.title, x.done])
+    : demoTasks;
+
 
   return (
     <div>
@@ -85,15 +99,15 @@ function Home() {
         </div>
         <Link to="/dashboard" className="card block p-6 transition hover:border-primary/40 hover:shadow-glow" aria-label="Open your dashboard tasks">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Goal</p>
-          <p className="font-display text-lg font-semibold">Become a frontend developer</p>
-          <div className="mt-4 flex items-center justify-between text-sm"><span className="text-muted-foreground">Overall progress</span><span className="font-semibold">38%</span></div>
-          <div className="mt-2"><ProgressBar value={0.38} /></div>
-          <div className="mt-5 rounded-lg bg-primary-soft p-3 text-sm"><span className="font-semibold text-primary">Month 2:</span> Guided practice</div>
+          <p className="font-display text-lg font-semibold">{plan ? plan.goal : "Become a frontend developer"}</p>
+          <div className="mt-4 flex items-center justify-between text-sm"><span className="text-muted-foreground">Overall progress</span><span className="font-semibold">{Math.round(progress * 100)}%</span></div>
+          <div className="mt-2"><ProgressBar value={progress} /></div>
+          <div className="mt-5 rounded-lg bg-primary-soft p-3 text-sm"><span className="font-semibold text-primary">Month {curMonth + 1}:</span> {milestone?.title ?? "Guided practice"}</div>
           <ul className="mt-4 space-y-2">
-            {[["Study one core concept of CSS layout", true], ["Do a 20-min practice exercise", true], ["Write notes summarising today's learning", false]].map(([t, d]) => (
-              <li key={t as string} className="flex items-center gap-3 rounded-lg border p-3 text-sm">
-                {d ? <CheckCircle2 className="h-5 w-5 text-success" /> : <Circle className="h-5 w-5 text-muted-foreground" />}
-                <span className={d ? "text-muted-foreground line-through" : ""}>{t as string}</span>
+            {cardTasks.map(([title, isDone]) => (
+              <li key={title} className="flex items-center gap-3 rounded-lg border p-3 text-sm">
+                {isDone ? <CheckCircle2 className="h-5 w-5 text-success" /> : <Circle className="h-5 w-5 text-muted-foreground" />}
+                <span className={isDone ? "text-muted-foreground line-through" : ""}>{title}</span>
               </li>
             ))}
           </ul>
