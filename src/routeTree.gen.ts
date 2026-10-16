@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as GoalsRouteImport } from './routes/goals'
+import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as NewRouteImport } from './routes/new'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RoadmapRouteImport } from './routes/roadmap'
@@ -36,6 +37,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const GoalsRoute = GoalsRouteImport.update({
   id: '/goals',
   path: '/goals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewRoute = NewRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/goals': typeof GoalsRoute
+  '/insights': typeof InsightsRoute
   '/new': typeof NewRoute
   '/reset-password': typeof ResetPasswordRoute
   '/roadmap': typeof RoadmapRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/goals': typeof GoalsRoute
+  '/insights': typeof InsightsRoute
   '/new': typeof NewRoute
   '/reset-password': typeof ResetPasswordRoute
   '/roadmap': typeof RoadmapRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/goals': typeof GoalsRoute
+  '/insights': typeof InsightsRoute
   '/new': typeof NewRoute
   '/reset-password': typeof ResetPasswordRoute
   '/roadmap': typeof RoadmapRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/goals'
+    | '/insights'
     | '/new'
     | '/reset-password'
     | '/roadmap'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/goals'
+    | '/insights'
     | '/new'
     | '/reset-password'
     | '/roadmap'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/goals'
+    | '/insights'
     | '/new'
     | '/reset-password'
     | '/roadmap'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
   GoalsRoute: typeof GoalsRoute
+  InsightsRoute: typeof InsightsRoute
   NewRoute: typeof NewRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RoadmapRoute: typeof RoadmapRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/goals'
       fullPath: '/goals'
       preLoaderRoute: typeof GoalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/new': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
   GoalsRoute: GoalsRoute,
+  InsightsRoute: InsightsRoute,
   NewRoute: NewRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RoadmapRoute: RoadmapRoute,
