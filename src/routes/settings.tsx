@@ -44,7 +44,7 @@ function Settings() {
       </section>
       <section className="card p-5">
         <h2 className="font-semibold">AI planning</h2>
-        <p className="text-sm text-muted-foreground">Not connected. DreamStep currently creates sample plans on your device, free of charge. AI-generated plans can be enabled later.</p>
+        <p className="text-sm text-muted-foreground">AI roadmap generation is integrated. Availability depends on server configuration and available AI credits.</p>
       </section>
       <section className="card p-5">
         <h2 className="font-semibold text-destructive">Reset data</h2>
