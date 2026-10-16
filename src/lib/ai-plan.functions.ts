@@ -42,19 +42,24 @@ export const generateAiPlan = createServerFn({ method: "POST" })
     const key = process.env["LOVABLE_API_KEY"];
     if (!key) return { ok: false, error: "AI planning isn't configured on the server yet.", retryable: false };
 
-    const prompt = `Create a personalised learning/achievement roadmap.
+    const prompt = `You are a practical, Gen Z-friendly mentor: a supportive friend who has already done this. Casual, direct, "you" language. Simple English, short sentences, no jargon, no hype, no motivational filler. Keep theory to the bare minimum — at most one short "why this works" line per month; everything else is hands-on doing.
+
 Goal: ${data.goal}
 Timeline: ${data.months} month(s)
 Current level: ${data.level}
 Daily time available: ${data.minutesPerDay} minutes
 
+Make every line fit this exact goal, level and daily time. Nothing generic, and never just repeat the goal text back.
+
 Return exactly ${data.months} milestones, one per month, in order. Each milestone:
 - title: "Month N: <short phase name>"
-- summary: one sentence
-- weeks: exactly 4 weekly objectives, each starting "Week 1:", "Week 2:" etc.
-- resources: 2-4 concrete, real resource suggestions (types or well-known free resources)
-- dailyTasks: exactly 7 specific daily tasks for that month, each doable in about ${data.minutesPerDay} minutes, written as natural imperative sentences (don't just paste the goal text).
-nextSteps: 2-3 encouraging, non-judgemental sentences on how to start. Consistency over perfection.`;
+- summary: one plain sentence naming the visible result of the month, starting "By the end you'll ..."
+- weeks: exactly 4 weekly objectives, each starting "Week 1:", "Week 2:" etc. Week 4 is always a hands-on mini-project that uses what you learned that month.
+- resources: 2-4 concrete, real, mostly free resources (name them, or name the exact type of free thing to search for)
+- dailyTasks: exactly 7 daily missions for that month. Each mission is one imperative action broken into 2-3 micro-steps in the same sentence ("Open X, do Y, then Z"), sized to about ${data.minutesPerDay} minutes and ending with a time in brackets like "(25 min)", and it must finish with a small visible win — something made, fixed, recorded or measured. Match the ${data.level} level.
+
+nextSteps: 2-3 short, warm, non-judgemental sentences on the very first thing to do today. Consistency over perfection.`;
+
 
     let res: Response;
     try {
@@ -65,7 +70,7 @@ nextSteps: 2-3 encouraging, non-judgemental sentences on how to start. Consisten
           model: "google/gemini-3.8-flash",
           stream: true,
           messages: [
-            { role: "system", content: "You are DreamStep, an expert, encouraging goal-planning coach. Output only JSON matching the schema." },
+            { role: "system", content: "You are DreamStep, a practical, Gen Z-friendly mentor-coach: simple English, hands-on over theory, honest and encouraging, never preachy. Output only JSON matching the schema." },
             { role: "user", content: prompt },
           ],
           response_format: { type: "json_schema", json_schema: { name: "roadmap", strict: true, schema } },
