@@ -60,8 +60,8 @@ Return exactly ${data.months} milestones, one per month, in order. Each mileston
 
 nextSteps: 2-3 short, warm, non-judgemental sentences on the very first thing to do today. Consistency over perfection.`;
 
-
     let res: Response;
+
     try {
       res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
