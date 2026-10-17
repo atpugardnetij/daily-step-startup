@@ -68,6 +68,7 @@ const links = [
   { to: "/", label: "Home" },
   { to: "/goals", label: "My Goals" },
   { to: "/dashboard", label: "Dashboard" },
+  { to: "/about", label: "About" },
   { to: "/settings", label: "Settings" },
 ] as const;
 
