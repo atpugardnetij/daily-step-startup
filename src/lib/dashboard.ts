@@ -1,4 +1,4 @@
-import { addDays, parseISO } from "date-fns";
+import { addDays, differenceInCalendarDays, parseISO } from "date-fns";
 import { fmt, type Plan } from "./planner";
 
 export const parseDay = (d: string) => parseISO(d);
@@ -12,7 +12,7 @@ export function planStats(p: Plan, t: string) {
   const todays = p.tasks.filter((x) => x.date === t);
   const overdue = p.tasks.filter((x) => !x.done && x.date < t);
   const upcoming = p.tasks.filter((x) => x.date > t).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
-  const elapsed = Math.floor((parseDay(t).getTime() - parseDay(p.startDate).getTime()) / 86400000);
+  const elapsed = differenceInCalendarDays(parseDay(t), parseDay(p.startDate));
   const last = Math.max(0, p.milestones.length - 1);
   const curMonth = Math.min(last, Math.max(0, Math.floor(elapsed / 30)));
   const milestone = p.milestones[curMonth];
@@ -32,7 +32,7 @@ export function planStats(p: Plan, t: string) {
     if (d < p.startDate) break;
     const ts = p.tasks.filter((x) => x.date === d);
     if (ts.length && ts.every((x) => x.done)) streak++;
-    else if (i > 0 || ts.length) { if (i > 0) break; }
+    else if (i > 0) break;
   }
   return {
     done, total, todays, overdue, upcoming, curMonth, milestone, completedMilestones, days,
