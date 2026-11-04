@@ -1,6 +1,7 @@
 // ============= Full file contents =============
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, GraduationCap, BrainCircuit, Wrench, Linkedin, Instagram, Sparkles } from "lucide-react";
+import portrait from "@/assets/jitendra-portrait.png.asset.json";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -29,7 +30,7 @@ function About() {
       <section className="bg-hero">
         <div className="mx-auto max-w-6xl px-4 pb-16 pt-20 text-center md:pt-24">
           <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-medium text-primary"><Sparkles className="h-3.5 w-3.5" /> Meet the maker</span>
-          <div className="mx-auto mt-8 grid h-24 w-24 place-items-center rounded-3xl bg-brand font-display text-3xl font-bold text-primary-foreground shadow-glow">JG</div>
+          <img src={portrait.url} alt="Jitendra Gupta" className="mx-auto h-28 w-28 rounded-3xl object-cover object-top shadow-glow ring-4 ring-card" />
           <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-bold md:text-5xl">Hi, I'm Jitendra Gupta — <span className="bg-brand bg-clip-text text-transparent">the student behind DreamStep</span>.</h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">A Class 12 student and aspiring AI/ML engineer who loves technology, learning new things, and turning ideas into products people actually use.</p>
           <div className="mt-7 flex justify-center gap-3">
