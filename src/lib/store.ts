@@ -11,7 +11,34 @@ const subs = new Set<() => void>();
 function load() {
   if (loaded || typeof window === "undefined") return;
   loaded = true;
-  try { const raw = localStorage.getItem(KEY); if (raw) state = JSON.parse(raw); } catch { /* ignore */ }
+  state = readSaved();
+  // Keep other open tabs in sync so one tab never overwrites another's progress.
+  window.addEventListener("storage", (e) => {
+    if (e.key !== KEY) return;
+    state = readSaved();
+    subs.forEach((f) => f());
+  });
+}
+/** Read saved data defensively; a damaged copy is backed up, never silently overwritten. */
+export function parseSaved(raw: string | null): State {
+  if (!raw) return empty;
+  try {
+    const v = JSON.parse(raw);
+    if (!v || !Array.isArray(v.plans)) throw new Error("bad shape");
+    const plans = (v.plans as Plan[]).filter((p) => p && typeof p.id === "string" && Array.isArray(p.tasks));
+    const activeId = plans.some((p) => p.id === v.activeId) ? v.activeId : plans[0]?.id ?? null;
+    return { plans, activeId };
+  } catch {
+    return empty;
+  }
+}
+function readSaved(): State {
+  try {
+    const raw = localStorage.getItem(KEY);
+    const parsed = parseSaved(raw);
+    if (raw && parsed === empty) localStorage.setItem(KEY + ":backup", raw);
+    return parsed;
+  } catch { return empty; }
 }
 function set(next: State) {
   state = next;
