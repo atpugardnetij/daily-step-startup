@@ -59,3 +59,19 @@ describe("planStats", () => {
     expect(read().plans.find((p: Plan) => p.id === "p").tasks[1].done).toBe(false);
   });
 });
+import { parseSaved } from "./store";
+describe("saved data loading", () => {
+  it("restores plans and active goal", () => {
+    const raw = JSON.stringify({ plans: [{ id: "a", tasks: [{ id: "t", done: true }] }], activeId: "a" });
+    const s = parseSaved(raw);
+    expect(s.activeId).toBe("a");
+    expect(s.plans[0].tasks[0].done).toBe(true);
+  });
+  it("falls back to first plan when active id is missing", () => {
+    expect(parseSaved(JSON.stringify({ plans: [{ id: "b", tasks: [] }], activeId: "zzz" })).activeId).toBe("b");
+  });
+  it("does not crash on damaged data", () => {
+    expect(parseSaved("{not json").plans).toEqual([]);
+    expect(parseSaved(JSON.stringify({ foo: 1 })).plans).toEqual([]);
+  });
+});
