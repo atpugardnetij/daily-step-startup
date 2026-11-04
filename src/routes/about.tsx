@@ -1,7 +1,7 @@
 // ============= Full file contents =============
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, GraduationCap, BrainCircuit, Wrench, Linkedin, Instagram, Sparkles } from "lucide-react";
-import portrait from "@/assets/jitendra-portrait.png.asset.json";
+import portrait from "@/assets/jitendra-portrait-new.png.asset.json";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
