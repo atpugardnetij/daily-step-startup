@@ -65,7 +65,7 @@ describe("saved data loading", () => {
     const raw = JSON.stringify({ plans: [{ id: "a", tasks: [{ id: "t", done: true }] }], activeId: "a" });
     const s = parseSaved(raw);
     expect(s.activeId).toBe("a");
-    expect(s.plans[0].tasks[0].done).toBe(true);
+    expect(s.plans[0]?.tasks[0]?.done).toBe(true);
   });
   it("falls back to first plan when active id is missing", () => {
     expect(parseSaved(JSON.stringify({ plans: [{ id: "b", tasks: [] }], activeId: "zzz" })).activeId).toBe("b");
