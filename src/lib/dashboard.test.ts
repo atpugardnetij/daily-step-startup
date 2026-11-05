@@ -90,3 +90,14 @@ describe("account sync merge", () => {
     expect(m.plans[0]?.tasks[0]?.done).toBe(true);
   });
 });
+
+import { goalMetrics } from "./dashboard";
+describe("goalMetrics", () => {
+  it("measures pace, days left and per-milestone targets from real tasks", () => {
+    const g = goalMetrics(base, "2026-01-31");
+    expect(g.scheduledByToday).toBe(2);
+    expect(g.doneByToday).toBe(1);
+    expect(g.daysLeft).toBe(29);
+    expect(g.milestones.map((m) => [m.done, m.total, m.deadline, m.complete])).toEqual([[1, 1, "2026-01-30", true], [0, 2, "2026-02-01", false]]);
+  });
+});
