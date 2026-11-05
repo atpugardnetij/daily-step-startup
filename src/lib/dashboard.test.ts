@@ -75,3 +75,18 @@ describe("saved data loading", () => {
     expect(parseSaved(JSON.stringify({ foo: 1 })).plans).toEqual([]);
   });
 });
+
+import { mergeStates } from "./sync-merge";
+describe("account sync merge", () => {
+  const P = (id: string, done = false) => ({ id, tasks: [{ id: "t", done }] }) as unknown as Plan;
+  it("keeps device-only plans and account plans", () => {
+    const m = mergeStates({ plans: [P("local")], activeId: "local" }, { plans: [P("cloud")], activeId: "cloud" });
+    expect(m.plans.map((p) => p.id).sort()).toEqual(["cloud", "local"]);
+    expect(m.activeId).toBe("local");
+  });
+  it("uses the account copy for the same plan", () => {
+    const m = mergeStates({ plans: [P("a", false)], activeId: "a" }, { plans: [P("a", true)], activeId: "a" });
+    expect(m.plans).toHaveLength(1);
+    expect(m.plans[0]?.tasks[0]?.done).toBe(true);
+  });
+});

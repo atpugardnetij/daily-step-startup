@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import type { Plan } from "./planner";
 
-interface State { plans: Plan[]; activeId: string | null; }
+export interface State { plans: Plan[]; activeId: string | null; }
 const KEY = "dreamstep:v1";
 const empty: State = { plans: [], activeId: null };
 let state: State = empty;
@@ -40,11 +40,18 @@ function readSaved(): State {
     return parsed;
   } catch { return empty; }
 }
-function set(next: State) {
+const localSubs = new Set<(s: State) => void>();
+/** Listen for user-made changes (not remote loads) — used by cloud sync. */
+export function onLocalChange(f: (s: State) => void) { localSubs.add(f); return () => { localSubs.delete(f); }; }
+export function getState(): State { load(); return state; }
+/** Replace state from the cloud without echoing it back as a local edit. */
+export function replaceState(next: State) { load(); write(parseSaved(JSON.stringify(next))); }
+function write(next: State) {
   state = next;
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* quota */ }
   subs.forEach((f) => f());
 }
+function set(next: State) { write(next); localSubs.forEach((f) => f(next)); }
 
 export const store = {
   addPlan(p: Plan) { load(); set({ plans: [p, ...state.plans], activeId: p.id }); },
