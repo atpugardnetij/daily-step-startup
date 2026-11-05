@@ -3,6 +3,7 @@ import { Moon, Sun, Menu, X, Footprints, LogOut, UserRound } from "lucide-react"
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { flushSync } from "@/lib/sync";
 
 export function useAuthUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -20,6 +21,7 @@ export function AuthButton() {
   const user = useAuthUser();
   const navigate = useNavigate();
   const signOut = async () => {
+    await flushSync();
     await supabase.auth.signOut();
     navigate({ to: "/", replace: true });
   };

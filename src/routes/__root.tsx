@@ -1,3 +1,4 @@
+import { startSync } from "@/lib/sync";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -130,6 +131,7 @@ function RootComponent() {
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
+  useEffect(() => startSync(), []);
 
   return (
     <QueryClientProvider client={queryClient}>

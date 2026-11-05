@@ -11,3 +11,4 @@
 
 - Keep dashboard and insights calculations in the browser-safe `src/lib/dashboard.ts` module, derived from the existing plan store, so both pages agree without changing saved data.
 - Keep daily actions on `/dashboard` and read-only secondary statistics and scheduled-day history on `/insights`; history is not a completion-time audit log because tasks do not store completion timestamps.
+- Plans sync per signed-in user via one `user_plan_state` JSON row (src/lib/sync.ts) with localStorage as the offline cache; keeps the existing store API unchanged for every page.
