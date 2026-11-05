@@ -41,3 +41,16 @@ export function planStats(p: Plan, t: string) {
     weekDone, weekTotal, minutesDone, streak,
   };
 }
+/** Measurable targets derived only from scheduled/completed tasks and the plan's own dates. */
+export function goalMetrics(p: Plan, t: string) {
+  const scheduledByToday = p.tasks.filter((x) => x.date <= t).length;
+  const doneByToday = p.tasks.filter((x) => x.done && x.date <= t).length;
+  const daysLeft = Math.max(0, differenceInCalendarDays(parseDay(p.targetDate), parseDay(t)));
+  const milestones = p.milestones.map((m, i) => {
+    const ts = p.tasks.filter((x) => x.month === i);
+    const done = ts.filter((x) => x.done).length;
+    const deadline = ts.length ? ts.reduce((a, x) => (x.date > a ? x.date : a), ts[0]!.date) : fmt(addDays(parseDay(p.startDate), (i + 1) * 30 - 1));
+    return { title: m.title, summary: m.summary, done, total: ts.length, deadline, complete: ts.length > 0 && done === ts.length };
+  });
+  return { scheduledByToday, doneByToday, daysLeft, milestones };
+}
