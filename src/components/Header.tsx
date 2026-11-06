@@ -1,9 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Moon, Sun, Menu, X, Footprints, LogOut, UserRound } from "lucide-react";
+import { Moon, Sun, Menu, X, Footprints, LogOut, UserRound, Flame } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { flushSync } from "@/lib/sync";
+import { useStore } from "@/lib/store";
+import { planStats } from "@/lib/dashboard";
+import { today } from "@/lib/planner";
 
 export function useAuthUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -50,6 +53,20 @@ export function Logo() {
   );
 }
 
+export function StreakBadge() {
+  const { active } = useStore();
+  if (!active) return null;
+  const streak = planStats(active, today()).streak;
+  return (
+    <Link to="/dashboard" aria-label={`${streak} day streak — open your dashboard`}
+      title={streak > 0 ? `${streak} day streak — keep it going!` : "Complete today's tasks to start a streak"}
+      className="flex items-center gap-1 rounded-lg bg-secondary px-2.5 py-1.5 text-sm font-bold">
+      <Flame className={`h-4 w-4 ${streak > 0 ? "text-warning" : "text-muted-foreground"}`} />
+      {streak}
+    </Link>
+  );
+}
+
 export function ThemeToggle() {
   const [dark, setDark] = useState(false);
   useEffect(() => { setDark(document.documentElement.classList.contains("dark")); }, []);
@@ -86,6 +103,7 @@ export function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <StreakBadge />
           <ThemeToggle />
           <AuthButton />
           <Link to="/new" className="btn btn-primary hidden sm:inline-flex">Start Your Journey</Link>
@@ -95,6 +113,7 @@ export function Header() {
       {open && (
         <nav className="flex flex-col gap-1 border-t px-4 py-3 md:hidden">
           {links.map((l) => <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium" activeOptions={{ exact: true }} activeProps={{ className: "text-primary bg-primary-soft" }}>{l.label}</Link>)}
+          <div onClick={() => setOpen(false)} className="mt-2"><StreakBadge /></div>
           <Link to="/new" onClick={() => setOpen(false)} className="btn btn-primary mt-2">Start Your Journey</Link>
           <div onClick={() => setOpen(false)} className="mt-2"><AuthButton /></div>
         </nav>
