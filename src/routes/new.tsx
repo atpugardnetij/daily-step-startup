@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, Sparkles, Info, RotateCw } from "lucide-react";
 import { generateSamplePlan, buildAiPlan, type Level } from "@/lib/planner";
 import { generateAiPlan } from "@/lib/ai-plan.functions";
-import { store } from "@/lib/store";
+import { store, useStore } from "@/lib/store";
+import { canCreatePlan, FREE_PLAN_LIMIT } from "@/lib/plans-limit";
 
 export const Route = createFileRoute("/new")({
   head: () => ({
@@ -23,6 +24,7 @@ const TIMES = [15, 30, 45, 60, 90, 120];
 
 function NewGoal() {
   const nav = useNavigate();
+  const { plans } = useStore();
   const [goal, setGoal] = useState("");
   const [months, setMonths] = useState(3);
   const [level, setLevel] = useState<Level>("Beginner");
@@ -58,6 +60,19 @@ function NewGoal() {
     store.addPlan(generateSamplePlan({ goal: goal.trim(), months, level, minutesPerDay: minutes }));
     nav({ to: "/roadmap" });
   };
+
+  if (!canCreatePlan(plans.length)) {
+    return (
+      <div className="mx-auto max-w-xl px-4 py-16 text-center">
+        <h1 className="text-3xl font-bold">You've used your {FREE_PLAN_LIMIT} free goal plans</h1>
+        <p className="mt-3 text-muted-foreground">Great going! Subscribe to create more plans, or delete an old goal to free up a spot.</p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link to="/pricing" className="btn btn-primary">See subscriptions</Link>
+          <Link to="/goals" className="btn btn-outline">Manage my goals</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
