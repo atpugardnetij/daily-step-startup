@@ -103,6 +103,7 @@ export function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <StreakBadge />
           <ThemeToggle />
           <AuthButton />
           <Link to="/new" className="btn btn-primary hidden sm:inline-flex">Start Your Journey</Link>
