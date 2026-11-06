@@ -1,9 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Moon, Sun, Menu, X, Footprints, LogOut, UserRound } from "lucide-react";
+import { Moon, Sun, Menu, X, Footprints, LogOut, UserRound, Flame } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { flushSync } from "@/lib/sync";
+import { useStore } from "@/lib/store";
+import { planStats } from "@/lib/dashboard";
+import { today } from "@/lib/planner";
 
 export function useAuthUser() {
   const [user, setUser] = useState<User | null>(null);
