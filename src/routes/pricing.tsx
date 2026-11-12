@@ -25,6 +25,9 @@ function Pricing() {
       <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">
         Every account gets {FREE_PLAN_LIMIT} goal plans free. Choose a subscription to keep growing.
       </p>
+      <p className="mt-3 text-center text-sm">
+        <Link to="/plans" className="text-primary underline">Compare all plans side by side</Link>
+      </p>
       <div className="mt-10 grid gap-6 md:grid-cols-3">
         {TIERS.map((t, i) => (
           <div key={t.id} className={`card flex flex-col p-6 ${i === 1 ? "ring-2 ring-primary shadow-glow" : ""}`}>
@@ -43,7 +46,11 @@ function Pricing() {
           Thanks for choosing {picked}! Payments are opening soon — we'll let you know when you can subscribe.
         </p>
       )}
-      <p className="mt-8 text-center text-sm text-muted-foreground"><Link to="/goals" className="text-primary underline">Back to my goals</Link></p>
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        <Link to="/plans" className="text-primary underline">See every plan's limits and features</Link>
+        {" · "}
+        <Link to="/goals" className="text-primary underline">Back to my goals</Link>
+      </p>
     </div>
   );
 }
